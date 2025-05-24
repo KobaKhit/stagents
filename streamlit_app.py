@@ -13,7 +13,7 @@ client = OpenAI(api_key=openai_api_key)
 # Create a session state variable to store the chat messages. This ensures that the
 # messages persist across reruns.
 knowledge = open('knowledge.md','r').read()
-system_prompt = '''
+system_prompt = f'''
 <knowledge>
 {knowledge}
 </knowledge>
@@ -50,16 +50,13 @@ if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user", avatar = ":material/person:"):
         st.markdown(prompt)
-
-    # Generate a response using the OpenAI API.
-    stream = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        messages=[
-            {"role": m["role"], "content": m["content"]}
-            for m in st.session_state.messages
-        ],
-        stream=True,
-    )
+    with st.spinner('Thinking...'):
+        # Generate a response using the OpenAI API.
+        stream = client.chat.completions.create(
+            model="gpt-4.1-nano",
+            messages=st.session_state.messages,
+            stream=True,
+        )
 
     # Stream the response to the chat using `st.write_stream`, then store it in 
     # session state.
