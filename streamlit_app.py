@@ -36,7 +36,7 @@ def get_system_prompt():
 
 def main():
     if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": 'system', "content": get_system_prompt},
+        st.session_state.messages = [{"role": 'system', "content": get_system_prompt()},
                                     {"role": 'assistant', "content": 'Hello! Welcome to Rebelz Basketball Program. How can I assist you today?'}]
 
     # Display the existing chat messages via `st.chat_message`.
