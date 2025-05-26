@@ -1,6 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 import os
+import requests
 
 # Ask user for their OpenAI API key via `st.text_input`.
 # Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
@@ -12,7 +13,8 @@ client = OpenAI(api_key=openai_api_key)
 
 # Create a session state variable to store the chat messages. This ensures that the
 # messages persist across reruns.
-knowledge = open('knowledge.md','r').read()
+knowledge_url = "https://raw.githubusercontent.com/KobaKhit/rebelz/refs/heads/main/static/knowledge/knowledge.md"
+knowledge = requests.get(knowledge_url).text
 system_prompt = f'''
 <knowledge>
 {knowledge}
