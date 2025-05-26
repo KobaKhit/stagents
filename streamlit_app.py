@@ -13,9 +13,24 @@ client = OpenAI(api_key=openai_api_key)
 def get_system_prompt():
     # Create a session state variable to store the chat messages. This ensures that the
     # messages persist across reruns.
-    knowledge_url = "https://raw.githubusercontent.com/KobaKhit/rebelz/refs/heads/main/static/knowledge/knowledge.md"
-    knowledge = requests.get(knowledge_url).text
-
+    # Fetch the latest knowledge.md from GitHub using the commits API
+    owner = "KobaKhit"
+    repo = "rebelz"
+    file_path = "static/knowledge/knowledge.md"
+    commits_url = f"https://api.github.com/repos/{owner}/{repo}/commits"
+    params = {"path": file_path, "per_page": 1}
+    # Optionally, add a GitHub token for higher rate limits
+    headers = {}
+    response = requests.get(commits_url, params=params, headers=headers)
+    if response.status_code == 200 and response.json():
+        latest_commit_sha = response.json()[0]['sha']
+        raw_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{latest_commit_sha}/{file_path}"
+        knowledge = requests.get(raw_url).text
+    else:
+        knowledge = "Could not fetch knowledge.md from GitHub."
+        knowledge_url = "https://raw.githubusercontent.com/KobaKhit/rebelz/refs/heads/main/static/knowledge/knowledge.md"
+        knowledge = requests.get(knowledge_url).text
+    st.write(knowledge)
     system_prompt = f'''
     <knowledge>
     {knowledge}
