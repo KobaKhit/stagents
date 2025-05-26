@@ -24,13 +24,11 @@ def get_system_prompt():
     response = requests.get(commits_url, params=params, headers=headers)
     if response.status_code == 200 and response.json():
         latest_commit_sha = response.json()[0]['sha']
-        raw_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{latest_commit_sha}/{file_path}"
-        knowledge = requests.get(raw_url).text
+        knowledge_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{latest_commit_sha}/{file_path}"
+    
     else:
-        knowledge = "Could not fetch knowledge.md from GitHub."
         knowledge_url = "https://raw.githubusercontent.com/KobaKhit/rebelz/refs/heads/main/static/knowledge/knowledge.md"
-        knowledge = requests.get(knowledge_url).text
-    st.write(knowledge)
+    knowledge = requests.get(knowledge_url).text
     system_prompt = f'''
     <knowledge>
     {knowledge}
